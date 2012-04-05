@@ -4,8 +4,7 @@ Comments, bug fixes and contributions to the package are welcome.
 
 ## Author
 
-J. Odent
-P. Dutre, J. Dupuis, A. Cailliau, S. Doeraene
+P. Dutre, J. Dupuis, A. Cailliau, S. Doeraene, J. Odent
 
 ## Licence
 
