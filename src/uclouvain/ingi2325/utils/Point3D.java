@@ -9,8 +9,17 @@ import uclouvain.ingi2325.math.*;
  * @author Antoine Cailliau <antoine.cailliau@uclouvain.be>
  * @author Julien Dupuis
  * @author Sébastien Doeraene <sjrdoeraene@gmail.com>
+ * @author Julien Odent <julien.odent@student.uclouvain.be>
  */
 public class Point3D extends Tuple3 {
+
+	public Point3D() {
+		super();
+	}
+
+	public Point3D(float x, float y, float z) {
+		super(x, y, z);
+	}
 
 	/**
 	 * Parse a Point3D from a string

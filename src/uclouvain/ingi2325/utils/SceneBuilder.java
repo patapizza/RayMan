@@ -1,8 +1,11 @@
 package uclouvain.ingi2325.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
 
 import org.xml.sax.InputSource;
 
@@ -14,6 +17,7 @@ import uclouvain.ingi2325.parser.ParserHandler;
  * 
  * @author Antoine Cailliau <antoine.cailliau@uclouvain.be>
  * @author Julien Dupuis
+ * @author Julien Odent <julien.odent@student.uclouvain.be>
  */
 public class SceneBuilder implements ParserHandler {
 
@@ -125,6 +129,7 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startCamera(Point3D position, Vector3D direction, Vector3D up,
 			float fovy, String name) throws Exception {
+		scene.addCamera(new Camera(position, direction, up, fovy, name));
 	}
 
 	/*
@@ -186,6 +191,7 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startPointLight(Point3D position, float intensity, Color color,
 			String name) throws Exception {
+		scene.addPointLight(new PointLight(position, intensity, color, name));
 	}
 
 	/*
@@ -350,6 +356,22 @@ public class SceneBuilder implements ParserHandler {
 			Vector3D[] normals, TextureCoordinates[] textureCoordinates,
 			int[] coordinateIndices, int[] normalIndices,
 			int[] textureCoordinateIndices, String name) throws Exception {
+		Point3D[] t_coordinates = null;
+		Vector3D[] t_normals = null;
+		TextureCoordinates[] t_textureCoordinates = null;
+		for (int i = 0 ; i < coordinateIndices.length ; i++) {
+			if (i % 3 == 0) {
+				if (i > 0)
+					scene.addTriangle(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
+				t_coordinates = new Point3D[3];
+				t_normals = new Vector3D[3];
+				t_textureCoordinates = new TextureCoordinates[3];
+			}
+			t_coordinates[i % 3] = coordinates[coordinateIndices[i]];
+			t_normals[i % 3] = normals[normalIndices[i]];
+			t_textureCoordinates[i % 3] = textureCoordinates[textureCoordinateIndices[i]];
+		}
+		scene.addTriangle(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
 	}
 
 	/*
@@ -371,6 +393,45 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startFileGeometry(String filename, String name)
 			throws Exception {
+		FileReader f = new FileReader(path + filename);
+		BufferedReader b = new BufferedReader(f);
+		ArrayList<Point3D> coordinates = new ArrayList<Point3D>();
+		ArrayList<TextureCoordinates> textureCoordinates = new ArrayList<TextureCoordinates>();
+		ArrayList<Vector3D> normals = new ArrayList<Vector3D>();
+		Point3D[] t_coordinates = null;
+		TextureCoordinates[] t_textureCoordinates = null;
+		Vector3D[] t_normals = null;
+		String[][] triplets;
+		String l;
+		while ((l = b.readLine()) != null) {
+			String[] chunks = l.split(" ");
+			if (chunks[0].equals("v"))
+				coordinates.add(Point3D.valueOf(chunks[1] + " " + chunks[2] + " " + chunks[3]));
+			else if (chunks[0].equals("vt"))
+				textureCoordinates.add(TextureCoordinates.valueOf(chunks[1] + " " + chunks[2]));
+			else if (chunks[0].equals("vn"))
+				normals.add(Vector3D.valueOf(chunks[1] + " " + chunks[2] + " " + chunks[3]));
+			else if (chunks[0].equals("f")) {
+				triplets = new String[3][3];
+				for (int i = 0 ; i < triplets.length ; i++)
+					triplets[i] = chunks[i + 1].split("/");
+				t_coordinates = new Point3D[3];
+				for (int i = 0 ; i < t_coordinates.length ; i++) 
+					t_coordinates[i] = coordinates.get(Integer.valueOf(triplets[i][0]) - 1);
+				t_textureCoordinates = new TextureCoordinates[3];
+				for (int i = 0 ; i < t_textureCoordinates.length ; i++)
+					try {
+						t_textureCoordinates[i] = textureCoordinates.get(Integer.valueOf(triplets[i][1]) - 1);
+					}
+					catch (NumberFormatException e) {
+						t_textureCoordinates[i] = TextureCoordinates.valueOf("0 0");
+					}
+				t_normals = new Vector3D[3];
+				for (int i = 0 ; i < t_normals.length ; i++)
+					t_normals[i] = normals.get(Integer.valueOf(triplets[i][2]) - 1);
+				scene.addTriangle(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
+			}
+		}
 	}
 
 	/*
@@ -447,7 +508,7 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void startDiffuseMaterial(Color color, String name) throws Exception {
-
+		scene.addDiffuseMaterial(new DiffuseMaterial(color, name));
 	}
 
 	/*
@@ -512,6 +573,8 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startScene(String cameraName, String[] lightNames,
 			Color background) throws Exception {
+		scene.setDefaultCamera(cameraName);
+		scene.setBackground(background);
 	}
 
 	/*
@@ -532,6 +595,7 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startShape(String geometryName, String materialName,
 			String textureName) throws Exception {
+		scene.setShape(geometryName, materialName);
 	}
 
 	/*

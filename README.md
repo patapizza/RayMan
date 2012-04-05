@@ -1,13 +1,10 @@
 # Computer Graphics Project
 
-This is the package of base class provided for the course INGI2325.
-
 Comments, bug fixes and contributions to the package are welcome.
-
-This package will stay minimal for obvious reasons ;-)
 
 ## Author
 
+J. Odent
 P. Dutre, J. Dupuis, A. Cailliau, S. Doeraene
 
 ## Licence

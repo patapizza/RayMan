@@ -1,0 +1,23 @@
+Computer Graphics Project (part 1)
+Author: Julien Odent
+
+
+Project architecture
+--
+The entry point of the program is the class Demo. It creates a JFrame containing the BufferedImage to render and calls the utils/SceneBuilder to build up a scene from the SDL input file.
+The drawPixels() method obviously draw each pixel after its ray has been made and tested against intersecting triangles.
+The main component is the class utils/Scene: it has the references to the lights, the surfaces, the cameras, the materials... The utils/SceneBuilder object makes objects from the parser and pass their references into utils/Scene.
+The method traverse() finds the closest surface (if any) to the view point and calls the shade() method before sending back the resulting pixel Color.
+There isn't yet any supporting data structure to efficiently handle the traversing between rays and surfaces, so for now each ray is tested against every single triangle.
+The output of the method shade() is the resulting Color of three shading algorithms: Lambertian shading, Blin-Phong shading and Ambient shading.
+
+For now, the sole available surface object is a Triangle. Also there's only one type of possible light (PointLight) and a unique material (DiffuseMaterial).
+
+Running and compiling
+--
+Simply issue the following commands in the current directory (i.e. the same where this very file is located):
+$ cd src
+$ javac Demo.java (compiling)
+$ java Demo <path/to/sdl/file.sdl> <width> <height> &
+
+Any OBJ file referenced into the input SDL file should be present into the same directory than the SDL file.
