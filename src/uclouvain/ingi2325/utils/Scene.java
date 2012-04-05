@@ -99,14 +99,23 @@ public class Scene {
 		float j = coordinates[0].x - position.x;
 		float k = coordinates[0].y - position.y;
 		float l = coordinates[0].z - position.z;
-		float M = a * (e * i - h * f) + b * (g * f - d * i) + c * (d * h - e * g);
-		float t = - (f * (a * k - j * b) + e * (j * c - a * l) + d * (b * l - k * c)) / M;
+
+		// Reducting number of operations
+		float eihf = e * i - h * f;
+		float gfdi = g * f - d * i;
+		float dheg = d * h - e * g;
+		float akjb = a * k - j * b;
+		float jcal = j * c - a * l;
+		float blkc = b * l - k * c;
+
+		float M = a * eihf + b * gfdi + c * dheg;
+		float t = - (f * akjb + e * jcal + d * blkc) / M;
 		if (t < 0 || t > t1)
 			return Float.POSITIVE_INFINITY;
-		float gamma = (i * (a * k - j * b) + h * (j * c - a * l) + g * (b * l - k * c)) / M;
+		float gamma = (i * akjb + h * jcal + g * blkc) / M;
 		if (gamma < 0 || gamma > 1)
 			return Float.POSITIVE_INFINITY;
-		float beta = (j * (e * i - h * f) + k * (g * f - d * i) + l * (d * h - e * g)) / M;
+		float beta = (j * eihf + k * gfdi + l * dheg) / M;
 		if (beta < 0 || beta > 1 - gamma)
 			return Float.POSITIVE_INFINITY;
 		return t;

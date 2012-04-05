@@ -82,9 +82,9 @@ public class Demo {
 		Color color = new Color();
 
 		for (int y = 0 ; y < height ; y++) {
+			float yv = (float) (b + (t - b) * (height - y + 0.5) / height);
 			for (int x = 0 ; x < width ; x++) {
 				float xu = (float) (l + (r - l) * (x + 0.5) / width);
-				float yv = (float) (b + (t - b) * (height - y + 0.5) / height);
 				uu.set(xu * u.x, xu * u.y, xu * u.z);
 				vv.set(yv * v.x, yv * v.y, yv * v.z);
 				direction.set(-d * w.x, -d * w.y, -d * w.z);
