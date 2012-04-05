@@ -32,23 +32,26 @@ public class Demo {
 	private PixelPanel panel;
 
 	public Demo(String[] args) {
+		long start = System.currentTimeMillis();
 		scene = null;
 		try {
 			SceneBuilder sceneBuilder = new SceneBuilder();
 			scene = sceneBuilder.loadScene(args[0]);
-			if (scene == null)
-				System.out.println("wtf???");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		long end = System.currentTimeMillis();
+		System.out.println("Building time: " + (end - start) + "ms.");
 		panel = new PixelPanel(Integer.valueOf(args[1]), Integer.valueOf(args[2]));
 		frame = new JFrame();
 		frame.getContentPane().add(panel);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		start = System.currentTimeMillis();
 		draw();
+		end = System.currentTimeMillis();
+		System.out.println("Rendering time: " + (end - start) + "ms.");
 	}
 
 	public void drawPixels() {
@@ -63,21 +66,30 @@ public class Demo {
 		Camera camera = scene.getDefaultCamera();
 		float d = t / (float) (Math.tan((camera.getFovy() / 2) * Math.PI / 180));
 
+		// Avoiding object creations at each pixel
+
 		Point3D e = camera.getPosition();
 		Vector3D ee = new Vector3D(e.x, e.y, e.z);
 		Vector3D u = camera.getU();
 		Vector3D v = camera.getV();
 		Vector3D w = camera.getW();
 
+		Vector3D uu = new Vector3D();
+		Vector3D vv = new Vector3D();
+		Vector3D direction = new Vector3D();
+
+		Ray ray = new Ray(e);
+		Color color = new Color();
+
 		for (int y = 0 ; y < height ; y++) {
 			for (int x = 0 ; x < width ; x++) {
 				float xu = (float) (l + (r - l) * (x + 0.5) / width);
 				float yv = (float) (b + (t - b) * (height - y + 0.5) / height);
-				Vector3D uu = new Vector3D(xu * u.x, xu * u.y, xu * u.z);
-				Vector3D vv = new Vector3D(yv * v.x, yv * v.y, yv * v.z);
-				Vector3D direction = (new Vector3D(-d * w.x, -d * w.y, -d * w.z)).addWith(uu).addWith(vv);
-				Ray ray = new Ray(e, direction);
-				Color color = scene.traverse(ray);
+				uu.set(xu * u.x, xu * u.y, xu * u.z);
+				vv.set(yv * v.x, yv * v.y, yv * v.z);
+				direction.set(-d * w.x, -d * w.y, -d * w.z);
+				ray.setDirection(direction.addWith(uu).addWith(vv));
+				color.set(scene.traverse(ray));
 				panel.drawPixel(x, y, color.x, color.y, color.z);
 			}
 			panel.repaint();

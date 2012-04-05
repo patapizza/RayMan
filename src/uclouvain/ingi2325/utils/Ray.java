@@ -16,6 +16,10 @@ public class Ray {
 		this.origin = origin;
 		this.direction = direction;
 	}
+	
+	public Ray(Point3D origin) {
+		this.origin = origin;
+	}
 
 	public Point3D getOrigin() {
 		return origin;
@@ -23,6 +27,10 @@ public class Ray {
 
 	public Vector3D getDirection() {
 		return direction;
+	}
+
+	public void setDirection(Vector3D direction) {
+		this.direction = direction;
 	}
 
 }
