@@ -31,9 +31,18 @@ public class Sphere extends Surface {
 		float discriminant = (float) (Math.pow(2 * dec, 2) - 4 * dd * (ec.dotProductWith(ec) - radius * radius));
 		if (discriminant < 0)
 			return Float.POSITIVE_INFINITY;
-		float t = (float) (- dec - Math.sqrt(discriminant)) / dd;
-		if (t < 0 || t > t1)
+		float root1 = (float) (- 2 * dec - Math.sqrt(discriminant)) / (2 * dd);
+		float root2 = (float) (- 2 * dec + Math.sqrt(discriminant)) / (2 * dd);
+		if (root1 < 0 || root1 > t1 && root2 < 0 || root2 > t1)
 			return Float.POSITIVE_INFINITY;
+
+		float t;
+		if (root1 < 0 || root1 > t1)
+			t = root2;
+		else if (root2 < 0 || root2 > t1 || root1 <= root2)
+			t = root1;
+		else
+			t = root2;
 
 		// Saving hit point's coordinates for later shading
 		hit.set(e.x + t * d.x, e.y + t * d.y, e.z + t * d.z);

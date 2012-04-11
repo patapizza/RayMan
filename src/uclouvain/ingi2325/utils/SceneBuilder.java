@@ -273,6 +273,7 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startCylinder(float radius, float height, boolean capped,
 			String name) throws Exception {
+		scene.addSurface(new Cylinder(radius, height, capped, name));
 	}
 
 	/*
