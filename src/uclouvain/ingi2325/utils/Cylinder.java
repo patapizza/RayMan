@@ -26,17 +26,23 @@ public class Cylinder extends Surface {
 		Point3D position = ray.getOrigin();
 		Vector3D e = new Vector3D(position.x, position.y, position.z);
 		Vector3D d = ray.getDirection();
-		float discriminant = (float) (Math.pow(2 * e.x * d.x + 2 * e.z * d.z, 2) - 4 * (d.x * d.x + d.z * d.z) * (e.x * e.x + e.z * e.z - radius * radius));
+
+		// Reducing number of operations
+		float a = d.x * d.x + d.z * d.z;
+		float b = 2 * (e.x * d.x + e.z * d.z);
+		float c = e.x * e.x + e.z * e.z - radius * radius;
+
+		float discriminant = b * b - 4 * a * c;
 		float root1, root2;
 		if (discriminant < 0) {
 			root1 = Float.POSITIVE_INFINITY;
 			root2 = Float.POSITIVE_INFINITY;
 		}
 		else {
-			root1 = (float) (- (2 * e.x * d.x + 2 * e.z * d.z) - Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
+			root1 = (float) ((- b - Math.sqrt(discriminant)) / (2 * a));
 			if (root1 < 0 || root1 > t1)
 				root1 = Float.POSITIVE_INFINITY;
-			root2 = (float) (- (2 * e.x * d.x + 2 * e.z * d.z) + Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
+			root2 = (float) ((- b + Math.sqrt(discriminant)) / (2 * a));
 			if (root2 < 0 || root2 > t1)
 				root2 = Float.POSITIVE_INFINITY;
 		}
