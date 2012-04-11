@@ -30,17 +30,22 @@
        name="triangle2"
       />
       <FileGeometry filename="sphere.obj" name="sphere" />
+      <Sphere radius="1.5" name="sphere1" />
+      <Cylinder radius="1.0" height="5.0" capped="true" name="cylinder1" />
    </Geometry>
    
    <Materials>
       <DiffuseMaterial color="1 0 0" name="red" />
       <DiffuseMaterial color="1 1 0" name="yellow" />
       <DiffuseMaterial color="0 0 0.5" name="blue" />
+      <DiffuseMaterial color="0 1 0" name="green" />
    </Materials>
    
    <Scene camera="cam0" lights="light0" background="0.5 0.5 0.5">
       <Shape geometry="triangle1" material="yellow" />
       <Shape geometry="triangle2" material="red" />
       <Shape geometry="sphere" material="blue" />
+      <Shape geometry="sphere1" material="red" />
+      <Shape geometry="cylinder1" material="green" />
    </Scene>
 </Sdl>
