@@ -252,6 +252,7 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void startSphere(float radius, String name) throws Exception {
+		scene.addSurface(new Sphere(radius, name));
 	}
 
 	/*
@@ -362,7 +363,7 @@ public class SceneBuilder implements ParserHandler {
 		for (int i = 0 ; i < coordinateIndices.length ; i++) {
 			if (i % 3 == 0) {
 				if (i > 0)
-					scene.addTriangle(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
+					scene.addSurface(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
 				t_coordinates = new Point3D[3];
 				t_normals = new Vector3D[3];
 				t_textureCoordinates = new TextureCoordinates[3];
@@ -371,7 +372,7 @@ public class SceneBuilder implements ParserHandler {
 			t_normals[i % 3] = normals[normalIndices[i]];
 			t_textureCoordinates[i % 3] = textureCoordinates[textureCoordinateIndices[i]];
 		}
-		scene.addTriangle(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
+		scene.addSurface(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
 	}
 
 	/*
@@ -429,7 +430,7 @@ public class SceneBuilder implements ParserHandler {
 				t_normals = new Vector3D[3];
 				for (int i = 0 ; i < t_normals.length ; i++)
 					t_normals[i] = normals.get(Integer.valueOf(triplets[i][2]) - 1);
-				scene.addTriangle(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
+				scene.addSurface(new Triangle(t_coordinates, t_normals, t_textureCoordinates, name));
 			}
 		}
 	}

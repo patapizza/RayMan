@@ -12,7 +12,7 @@ public class Scene {
 
 	private LinkedList<Camera> cameras;
 	private int camera_default;
-	private LinkedList<Triangle> triangles;
+	private LinkedList<Surface> surfaces;
 	private Color background;
 	private Hashtable<String, DiffuseMaterial> diffuse_materials;
 	private LinkedList<PointLight> point_lights;
@@ -20,7 +20,7 @@ public class Scene {
 	public Scene() {
 		cameras = new LinkedList<Camera>();
 		camera_default = -1;
-		triangles = new LinkedList<Triangle>();
+		surfaces = new LinkedList<Surface>();
 		diffuse_materials = new Hashtable<String, DiffuseMaterial>();
 		point_lights = new LinkedList<PointLight>();
 	}
@@ -29,8 +29,8 @@ public class Scene {
 		cameras.add(c);
 	}
 
-	public void addTriangle(Triangle t) {
-		triangles.add(t);
+	public void addSurface(Surface s) {
+		surfaces.add(s);
 	}
 
 	public void addDiffuseMaterial(DiffuseMaterial d) {
@@ -42,9 +42,9 @@ public class Scene {
 	}
 
 	public void setShape(String geometry, String material) {
-		for (Triangle t : triangles)
-			if (t.getName().equals(geometry))
-				t.setColor(((DiffuseMaterial) diffuse_materials.get(material)).getColor());
+		for (Surface s : surfaces)
+			if (s.getName().equals(geometry))
+				s.setColor(((DiffuseMaterial) diffuse_materials.get(material)).getColor());
 	}
 
 	public void setBackground(Color c) {
@@ -69,56 +69,20 @@ public class Scene {
 	public Color traverse(Ray r) {
 		/* TODO: use efficient data structure to optimize the traversal (bounding boxes, uniform spatial subdivision, BSP tree...) */
 		float t1 = Float.POSITIVE_INFINITY;
-		Triangle triangle = null;
-		for (Triangle t : triangles) {
-			float intersection = traverseTriangle(r, t, t1);
+		Surface surface = null;
+		for (Surface s : surfaces) {
+			float intersection = s.traverse(r, t1);
 			if (intersection < t1) {
 				t1 = intersection;
-				triangle = t;
-
+				surface = s;
 			}
 		}
 		if (t1 == Float.POSITIVE_INFINITY)
 			return background;
-		return shade(triangle, point_lights.get(0));
-	}
-
-	private float traverseTriangle(Ray ray, Triangle triangle, float t1) {
-		Point3D[] coordinates = triangle.getCoordinates();
-		float a = coordinates[0].x - coordinates[1].x;
-		float b = coordinates[0].y - coordinates[1].y;
-		float c = coordinates[0].z - coordinates[1].z;
-		float d = coordinates[0].x - coordinates[2].x;
-		float e = coordinates[0].y - coordinates[2].y;
-		float f = coordinates[0].z - coordinates[2].z;
-		Vector3D direction = ray.getDirection();
-		float g = direction.x;
-		float h = direction.y;
-		float i = direction.z;
-		Point3D position = ray.getOrigin();
-		float j = coordinates[0].x - position.x;
-		float k = coordinates[0].y - position.y;
-		float l = coordinates[0].z - position.z;
-
-		// Reducting number of operations
-		float eihf = e * i - h * f;
-		float gfdi = g * f - d * i;
-		float dheg = d * h - e * g;
-		float akjb = a * k - j * b;
-		float jcal = j * c - a * l;
-		float blkc = b * l - k * c;
-
-		float M = a * eihf + b * gfdi + c * dheg;
-		float t = - (f * akjb + e * jcal + d * blkc) / M;
-		if (t < 0 || t > t1)
-			return Float.POSITIVE_INFINITY;
-		float gamma = (i * akjb + h * jcal + g * blkc) / M;
-		if (gamma < 0 || gamma > 1)
-			return Float.POSITIVE_INFINITY;
-		float beta = (j * eihf + k * gfdi + l * dheg) / M;
-		if (beta < 0 || beta > 1 - gamma)
-			return Float.POSITIVE_INFINITY;
-		return t;
+		/*if (surface instanceof Sphere)
+			return surface.getColor();
+		return shade((Triangle) surface, point_lights.get(0));*/
+		return surface.shade(point_lights.get(0));
 	}
 
 	private Color shade(Triangle t, PointLight p) {
