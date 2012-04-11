@@ -33,10 +33,10 @@ public class Cylinder extends Surface {
 			root2 = Float.POSITIVE_INFINITY;
 		}
 		else {
-			root1 = (float) (- 2 * e.x * d.x + 2 * e.z * d.z - Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
+			root1 = (float) (- (2 * e.x * d.x + 2 * e.z * d.z) - Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
 			if (root1 < 0 || root1 > t1)
 				root1 = Float.POSITIVE_INFINITY;
-			root2 = (float) (- 2 * e.x * d.x + 2 * e.z * d.z + Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
+			root2 = (float) (- (2 * e.x * d.x + 2 * e.z * d.z) + Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
 			if (root2 < 0 || root2 > t1)
 				root2 = Float.POSITIVE_INFINITY;
 		}
@@ -85,7 +85,6 @@ public class Cylinder extends Surface {
 			else {
 				float x = e.x + top * d.x;
 				float z = e.z + top * d.z;
-				// FIXME: the following condition is never satisfied
 				if (x * x + z * z > radius * radius)
 					top = Float.POSITIVE_INFINITY;
 			}
