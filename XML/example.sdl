@@ -29,9 +29,8 @@
        textureCoordinateIndices="0, 1, 2"
        name="triangle2"
       />
-      <FileGeometry filename="sphere.obj" name="sphere" />
-      <Sphere radius="1.5" name="sphere1" />
-      <Cylinder radius="1.0" height="5.0" capped="true" name="cylinder1" />
+      <Cone radius="1.0" height="3.0" capped="true" name="cone1" />
+      <Cylinder radius="1.0" height="3.0" capped="false" name="cylinder1" />
    </Geometry>
    
    <Materials>
@@ -44,8 +43,7 @@
    <Scene camera="cam0" lights="light0" background="0.5 0.5 0.5">
       <Shape geometry="triangle1" material="yellow" />
       <Shape geometry="triangle2" material="red" />
-      <Shape geometry="sphere" material="blue" />
-      <Shape geometry="sphere1" material="red" />
-      <Shape geometry="cylinder1" material="green" />
+      <Shape geometry="cone1" material="green" />
+      <Shape geometry="cylinder1" material="blue" />
    </Scene>
 </Sdl>

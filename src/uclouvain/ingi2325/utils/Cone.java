@@ -7,14 +7,14 @@ import uclouvain.ingi2325.exception.*;
  * 
  * @author Julien Odent <julien.odent@student.uclouvain.be>
  */
-public class Cylinder extends Surface {
+public class Cone extends Surface {
 
 	private float radius;
 	private float height;
 	private boolean capped;
 	private Vector3D hit;
 
-	public Cylinder(float radius, float height, boolean capped, String name) {
+	public Cone(float radius, float height, boolean capped, String name) {
 		this.radius = radius;
 		this.height = height;
 		this.capped = capped;
@@ -23,20 +23,22 @@ public class Cylinder extends Surface {
 	}
 
 	public float traverse(Ray ray, float t1) {
+		//FIXME: top of the cone must be a point!
 		Point3D position = ray.getOrigin();
 		Vector3D e = new Vector3D(position.x, position.y, position.z);
 		Vector3D d = ray.getDirection();
-		float discriminant = (float) (Math.pow(2 * e.x * d.x + 2 * e.z * d.z, 2) - 4 * (d.x * d.x + d.z * d.z) * (e.x * e.x + e.z * e.z - radius * radius));
+		float a = - (radius * radius) / (height * height);
+		float discriminant = (float) (Math.pow(2 * e.x * d.x + 2 * e.z * d.z + 2 * a * height * d.y - 2 * a * e.y * d.y, 2) - 4 * (d.x * d.x + d.z * d.z + d.y * d.y * a) * (e.x * e.x + e.z * e.z + a * height * height + a * e.y * e.y - 2 * a * height * e.y));
 		float root1, root2;
 		if (discriminant < 0) {
 			root1 = Float.POSITIVE_INFINITY;
 			root2 = Float.POSITIVE_INFINITY;
 		}
 		else {
-			root1 = (float) (- (2 * e.x * d.x + 2 * e.z * d.z) - Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
+			root1 = (float) ((- (2 * e.x * d.x + 2 * e.z * d.z + 2 * a * height * d.y - 2 * a * e.y * d.y) - Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z + d.y * d.y * a)));
 			if (root1 < 0 || root1 > t1)
 				root1 = Float.POSITIVE_INFINITY;
-			root2 = (float) (- (2 * e.x * d.x + 2 * e.z * d.z) + Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z));
+			root2 = (float) ((- (2 * e.x * d.x + 2 * e.z * d.z + 2 * a * height * d.y - 2 * a * e.y * d.y) + Math.sqrt(discriminant)) / (2 * (d.x * d.x + d.z * d.z + d.y * d.y * a)));
 			if (root2 < 0 || root2 > t1)
 				root2 = Float.POSITIVE_INFINITY;
 		}
@@ -74,21 +76,9 @@ public class Cylinder extends Surface {
 			}
 		}
 
-		// Intersecting with the caps
+		// Intersecting with the cap
 		if (capped) {
-			float top, bottom;
-			top = (height - e.y) / d.y;
-			if (top < 0)
-				top = Float.POSITIVE_INFINITY;
-			else {
-				float x = e.x + top * d.x;
-				float z = e.z + top * d.z;
-				if (x * x + z * z > radius * radius)
-					top = Float.POSITIVE_INFINITY;
-			}
-			if (top < t)
-				t = top;
-			bottom = - e.y / d.y;
+			float bottom = - e.y / d.y;
 			if (bottom < 0)
 				bottom = Float.POSITIVE_INFINITY;
 			else {
