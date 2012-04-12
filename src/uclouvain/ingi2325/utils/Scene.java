@@ -63,6 +63,7 @@ public class Scene {
 
 		// Setting dir vector for phong materials
 		Vector3D direction = c.getDirection();
+		direction.set(- direction.x, - direction.y, - direction.z);
 		Enumeration e = materials.keys();
 		Material m;
 		while (e.hasMoreElements()) {
@@ -83,7 +84,7 @@ public class Scene {
 		float t1 = Float.POSITIVE_INFINITY;
 		Surface surface = null;
 		for (Surface s : surfaces) {
-			float intersection = s.traverse(r, t1);
+			float intersection = s.traverse(r, 0.0F, t1);
 			if (intersection < t1) {
 				t1 = intersection;
 				surface = s;

@@ -20,4 +20,8 @@ public abstract class Material {
 		return name;
 	}
 
+	protected Color getAmbient() {
+		return new Color(color.x * 0.25F, color.y * 0.25F, color.z * 0.25F);
+	}
+
 }

@@ -11,8 +11,9 @@ public abstract class Surface {
 
 	protected String name;
 	protected Material material;
+	protected Point3D hit;
 
-	public abstract float traverse(Ray r, float t1);
+	public abstract float traverse(Ray r, float t0, float t1);
 
 	public abstract Color shade(PointLight p);
 

@@ -10,15 +10,14 @@ import uclouvain.ingi2325.exception.*;
 public class Sphere extends Surface {
 
 	private float radius;
-	private Vector3D hit;
 
 	public Sphere(float radius, String name) {
 		this.radius = radius;
 		this.name = name;
-		hit = new Vector3D(0, 0, 0);
+		hit = new Point3D(0, 0, 0);
 	}
 
-	public float traverse(Ray ray, float t1) {
+	public float traverse(Ray ray, float t0, float t1) {
 		Point3D position = ray.getOrigin();
 		Vector3D e = new Vector3D(position.x, position.y, position.z);
 		Vector3D d = ray.getDirection();
@@ -33,13 +32,13 @@ public class Sphere extends Surface {
 			return Float.POSITIVE_INFINITY;
 		float root1 = (float) (- 2 * dec - Math.sqrt(discriminant)) / (2 * dd);
 		float root2 = (float) (- 2 * dec + Math.sqrt(discriminant)) / (2 * dd);
-		if (root1 < 0 || root1 > t1 && root2 < 0 || root2 > t1)
+		if (root1 < t0 || root1 > t1 && root2 < t0 || root2 > t1)
 			return Float.POSITIVE_INFINITY;
 
 		float t;
-		if (root1 < 0 || root1 > t1)
+		if (root1 < t0 || root1 > t1)
 			t = root2;
-		else if (root2 < 0 || root2 > t1 || root1 <= root2)
+		else if (root2 < t0 || root2 > t1 || root1 <= root2)
 			t = root1;
 		else
 			t = root2;
@@ -51,10 +50,32 @@ public class Sphere extends Surface {
 	}
 
 	public Color shade(PointLight p) {
+		
+		// Ambient shading
+		Color ambient = material.getAmbient();
+
 		Point3D position = p.getPosition();
-		Vector3D l = new Vector3D(position.x - 0, position.y - 0, position.z - 0);
+		Vector3D l = (new Vector3D(position.x - hit.x, position.y - hit.y, position.z - hit.z)).normalize();
+
+		// Shadows
+		if (traverse(new Ray(hit, l), 0.042F, Float.POSITIVE_INFINITY) != Float.POSITIVE_INFINITY)
+			return ambient;
+
 		Vector3D n = (new Vector3D(2 * (hit.x - 0), 2 * (hit.y - 0), 2 * (hit.z - 0))).normalize();
-		return material.shade(l, n, p.getIntensity());
+
+		Color shaded = material.shade(l, n, p.getIntensity());
+		
+		// Ambient shading
+		shaded.x += ambient.x;
+		shaded.y += ambient.y;
+		shaded.z += ambient.z;
+
+		// Preventing overflows
+		shaded.x = Math.min(1, shaded.x);
+		shaded.y = Math.min(1, shaded.y);
+		shaded.z = Math.min(1, shaded.z);
+
+		return shaded;
 	}
 
 }
