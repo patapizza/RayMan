@@ -74,8 +74,7 @@ public class Triangle extends Surface {
 		Point3D position = p.getPosition();
 		Vector3D l = new Vector3D(position.x - center.x, position.y - center.y, position.z - center.z);
 		Vector3D n = getNormal().normalize();
-		float lambertian = p.getIntensity() * Math.max(0, n.dotProductWith(l.normalize()));
-		return new Color(color.x * lambertian, color.y * lambertian, color.z * lambertian);
+		return material.shade(l, n, p.getIntensity());
 	}
 
 }

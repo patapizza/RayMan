@@ -10,7 +10,7 @@ import uclouvain.ingi2325.exception.*;
 public abstract class Surface {
 
 	protected String name;
-	protected Color color;
+	protected Material material;
 
 	public abstract float traverse(Ray r, float t1);
 
@@ -20,12 +20,8 @@ public abstract class Surface {
 		return name;
 	}
 
-	public Color getColor() {
-		return color;
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
 
 }

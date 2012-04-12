@@ -34,9 +34,10 @@
    </Geometry>
    
    <Materials>
-      <DiffuseMaterial color="1 0 0" name="red" />
+      <PhongMaterial color="1 0 0" shininess="5" name="red" />
       <DiffuseMaterial color="1 1 0" name="yellow" />
-      <DiffuseMaterial color="0 0 0.5" name="blue" />
+      <PhongMaterial color="0 0 0.5" shininess="100" name="blue" />
+      <PhongMaterial color="0 1 0" shininess="10" name="phong" />
       <DiffuseMaterial color="0 1 0" name="green" />
    </Materials>
    

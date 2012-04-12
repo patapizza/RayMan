@@ -1,5 +1,6 @@
 package uclouvain.ingi2325.utils;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
@@ -14,14 +15,14 @@ public class Scene {
 	private int camera_default;
 	private LinkedList<Surface> surfaces;
 	private Color background;
-	private Hashtable<String, DiffuseMaterial> diffuse_materials;
+	private Hashtable<String, Material> materials;
 	private LinkedList<PointLight> point_lights;
 
 	public Scene() {
 		cameras = new LinkedList<Camera>();
 		camera_default = -1;
 		surfaces = new LinkedList<Surface>();
-		diffuse_materials = new Hashtable<String, DiffuseMaterial>();
+		materials = new Hashtable<String, Material>();
 		point_lights = new LinkedList<PointLight>();
 	}
 
@@ -33,8 +34,8 @@ public class Scene {
 		surfaces.add(s);
 	}
 
-	public void addDiffuseMaterial(DiffuseMaterial d) {
-		diffuse_materials.put(d.getName(), d);
+	public void addMaterial(Material m) {
+		materials.put(m.getName(), m);
 	}
 
 	public void addPointLight(PointLight p) {
@@ -44,7 +45,7 @@ public class Scene {
 	public void setShape(String geometry, String material) {
 		for (Surface s : surfaces)
 			if (s.getName().equals(geometry))
-				s.setColor(((DiffuseMaterial) diffuse_materials.get(material)).getColor());
+				s.setMaterial(materials.get(material));
 	}
 
 	public void setBackground(Color c) {
@@ -57,7 +58,18 @@ public class Scene {
 				camera_default = cameras.indexOf(c);
 				break;
 			}
-		cameras.get(camera_default).makeFrame();
+		Camera c = cameras.get(camera_default);
+		c.makeFrame();
+
+		// Setting dir vector for phong materials
+		Vector3D direction = c.getDirection();
+		Enumeration e = materials.keys();
+		Material m;
+		while (e.hasMoreElements()) {
+			m = (Material) materials.get((String) e.nextElement());
+			if (m instanceof PhongMaterial)
+				((PhongMaterial) m).setDirection(direction);
+		}
 	}
 
 	public Camera getDefaultCamera() {
@@ -79,13 +91,10 @@ public class Scene {
 		}
 		if (t1 == Float.POSITIVE_INFINITY)
 			return background;
-		/*if (surface instanceof Sphere)
-			return surface.getColor();
-		return shade((Triangle) surface, point_lights.get(0));*/
 		return surface.shade(point_lights.get(0));
 	}
 
-	private Color shade(Triangle t, PointLight p) {
+	/*private Color shade(Triangle t, PointLight p) {
 		Point3D center = t.getCenter();
 		Point3D position = p.getPosition();
 		Vector3D l = new Vector3D(position.x - center.x, position.y - center.y, position.z - center.z);
@@ -114,6 +123,6 @@ public class Scene {
 		r.z = Math.min(1, r.z);
 
 		return r;
-	}
+	}*/
 
 }

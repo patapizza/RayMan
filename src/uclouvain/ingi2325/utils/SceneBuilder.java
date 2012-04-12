@@ -511,7 +511,7 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void startDiffuseMaterial(Color color, String name) throws Exception {
-		scene.addDiffuseMaterial(new DiffuseMaterial(color, name));
+		scene.addMaterial(new DiffuseMaterial(color, name));
 	}
 
 	/*
@@ -533,7 +533,7 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startPhongMaterial(Color color, float shininess, String name)
 			throws Exception {
-
+		scene.addMaterial(new PhongMaterial(color, shininess, name));
 	}
 
 	/*

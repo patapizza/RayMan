@@ -117,8 +117,7 @@ public class Cylinder extends Surface {
 		Point3D position = p.getPosition();
 		Vector3D l = new Vector3D(position.x - 0, position.y - 0, position.z - 0);
 		Vector3D n = (new Vector3D(2 * (hit.x - 0), 2 * (hit.y - 0), 2 * (hit.z - 0))).normalize();
-		float lambertian = p.getIntensity() * Math.max(0, n.dotProductWith(l.normalize()));
-		return new Color(color.x * lambertian, color.y * lambertian, color.z * lambertian);
+		return material.shade(l, n, p.getIntensity());
 	}
 
 }
