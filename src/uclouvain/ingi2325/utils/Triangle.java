@@ -1,6 +1,7 @@
 package uclouvain.ingi2325.utils;
 
-import uclouvain.ingi2325.exception.*;
+import uclouvain.ingi2325.math.Matrix3;
+import uclouvain.ingi2325.math.Matrix4;
 
 /**
  * Represents a triangle
@@ -101,6 +102,25 @@ public class Triangle extends Surface {
 		shaded.z = Math.min(1, shaded.z);
 
 		return shaded;
+	}
+
+	public void transform(Matrix4 m) {
+		Point3D[] tr_coordinates = new Point3D[3];
+		Vector3D[] tr_normals = new Vector3D[3];
+		Matrix3 n = (new Matrix3(m)).normalize();
+		float x, y, z;
+		for (int i = 0 ; i < 3 ; i++) {
+			x = m.getElement(0, 0) * coordinates[i].x + m.getElement(0, 1) * coordinates[i].y + m.getElement(0, 2) * coordinates[i].z + m.getElement(0, 3) * 1.0F;
+			y = m.getElement(1, 0) * coordinates[i].x + m.getElement(1, 1) * coordinates[i].y + m.getElement(1, 2) * coordinates[i].z + m.getElement(0, 3) * 1.0F;
+			z = m.getElement(2, 0) * coordinates[i].x + m.getElement(2, 1) * coordinates[i].y + m.getElement(2, 2) * coordinates[i].z + m.getElement(0, 3) * 1.0F;
+			tr_coordinates[i] = new Point3D(x, y, z);
+			x = n.getElement(0, 0) * normals[i].x + n.getElement(0, 1) * normals[i].y + n.getElement(0, 2) * normals[i].z;
+			y = n.getElement(1, 0) * normals[i].x + n.getElement(1, 1) * normals[i].y + n.getElement(1, 2) * normals[i].z;
+			z = n.getElement(2, 0) * normals[i].x + n.getElement(2, 1) * normals[i].y + n.getElement(2, 2) * normals[i].z;
+			tr_normals[i] = new Vector3D(x, y, z);
+		}
+		coordinates = tr_coordinates;
+		normals = tr_normals;
 	}
 
 }

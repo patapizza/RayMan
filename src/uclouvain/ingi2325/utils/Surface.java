@@ -1,6 +1,6 @@
 package uclouvain.ingi2325.utils;
 
-import uclouvain.ingi2325.exception.*;
+import uclouvain.ingi2325.math.Matrix4;
 
 /**
  * Represents a surface
@@ -16,6 +16,8 @@ public abstract class Surface {
 	public abstract float traverse(Ray r, float t0, float t1);
 
 	public abstract Color shade(PointLight p);
+
+	public abstract void transform(Matrix4 m);
 
 	public String getName() {
 		return name;

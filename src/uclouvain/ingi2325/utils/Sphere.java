@@ -1,6 +1,6 @@
 package uclouvain.ingi2325.utils;
 
-import uclouvain.ingi2325.exception.*;
+import uclouvain.ingi2325.math.Matrix4;
 
 /**
  * Represents a sphere
@@ -10,10 +10,12 @@ import uclouvain.ingi2325.exception.*;
 public class Sphere extends Surface {
 
 	private float radius;
+	private Point3D center;
 
 	public Sphere(float radius, String name) {
 		this.radius = radius;
 		this.name = name;
+		center = new Point3D(0, 0, 0);
 		hit = new Point3D(0, 0, 0);
 	}
 
@@ -21,7 +23,7 @@ public class Sphere extends Surface {
 		Point3D position = ray.getOrigin();
 		Vector3D e = new Vector3D(position.x, position.y, position.z);
 		Vector3D d = ray.getDirection();
-		Vector3D ec = new Vector3D(e.x - 0, e.y - 0, e.z - 0);
+		Vector3D ec = new Vector3D(e.x - center.x, e.y - center.y, e.z - center.z);
 
 		// Reducing number of operations
 		float dec = d.dotProductWith(ec);
@@ -61,7 +63,7 @@ public class Sphere extends Surface {
 		if (traverse(new Ray(hit, l), 0.042F, Float.POSITIVE_INFINITY) != Float.POSITIVE_INFINITY)
 			return ambient;
 
-		Vector3D n = (new Vector3D(2 * (hit.x - 0), 2 * (hit.y - 0), 2 * (hit.z - 0))).normalize();
+		Vector3D n = (new Vector3D(2 * (hit.x - center.x), 2 * (hit.y - center.y), 2 * (hit.z - center.z))).normalize();
 
 		Color shaded = material.shade(l, n, p.getIntensity());
 		
@@ -76,6 +78,13 @@ public class Sphere extends Surface {
 		shaded.z = Math.min(1, shaded.z);
 
 		return shaded;
+	}
+
+	public void transform(Matrix4 m) {
+		float x = m.getElement(0, 0) * center.x + m.getElement(0, 1) * center.y + m.getElement(0, 2) * center.z + m.getElement(0, 3) * 1.0F;
+		float y = m.getElement(1, 0) * center.x + m.getElement(1, 1) * center.y + m.getElement(1, 2) * center.z + m.getElement(1, 3) * 1.0F;
+		float z = m.getElement(2, 0) * center.x + m.getElement(2, 1) * center.y + m.getElement(2, 2) * center.z + m.getElement(2, 3) * 1.0F;
+		center = new Point3D(x, y, z);
 	}
 
 }

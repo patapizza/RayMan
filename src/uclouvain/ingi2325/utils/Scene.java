@@ -4,6 +4,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import uclouvain.ingi2325.math.Matrix4;
+
 /**
  * Represents a scene
  * 
@@ -42,10 +44,13 @@ public class Scene {
 		point_lights.add(p);
 	}
 
-	public void setShape(String geometry, String material) {
+	public void setShape(String geometry, String material, Matrix4 m) {
 		for (Surface s : surfaces)
-			if (s.getName().equals(geometry))
+			if (s.getName().equals(geometry)) {
 				s.setMaterial(materials.get(material));
+				if (m != null)
+					s.transform(m);
+			}
 	}
 
 	public void setBackground(Color c) {

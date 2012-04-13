@@ -6,11 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import org.xml.sax.InputSource;
 
 import uclouvain.ingi2325.parser.Parser;
 import uclouvain.ingi2325.parser.ParserHandler;
+import uclouvain.ingi2325.math.Matrix4;
 
 /**
  * Represents a builder for scene
@@ -25,6 +27,9 @@ public class SceneBuilder implements ParserHandler {
 	 * The scene being build
 	 */
 	private Scene scene = null;
+
+	// The stack of transformation matrices
+	private Stack tr;
 
 	/**
 	 * Returns the build scene
@@ -578,6 +583,7 @@ public class SceneBuilder implements ParserHandler {
 			Color background) throws Exception {
 		scene.setDefaultCamera(cameraName);
 		scene.setBackground(background);
+		tr = new Stack();
 	}
 
 	/*
@@ -598,7 +604,21 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startShape(String geometryName, String materialName,
 			String textureName) throws Exception {
-		scene.setShape(geometryName, materialName);
+		Matrix4 res;
+		if (tr.empty())
+			res = null;
+		else {
+			Stack copy = (Stack) tr.clone();
+			res = new Matrix4();
+			res.resetToIdentity();
+
+			// Applying transformations
+			do
+				res = res.multiplyWith((Matrix4) copy.pop());
+			while (!copy.empty());
+
+		}
+		scene.setShape(geometryName, materialName, res);
 	}
 
 	/*
@@ -619,6 +639,38 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void startRotate(Vector3D axis, float angle) throws Exception {
+		Matrix4 m;
+
+		// Reducing number of operations
+		float cos = (float) Math.cos((float) angle);
+		float sin = (float) Math.sin((float) angle);
+
+		// Rotate around X-axis
+		if (axis.x == 1)
+			m = new Matrix4(1, 0, 0, 0,
+					0, cos, - sin, 0,
+					0, sin, cos, 0,
+					0, 0, 0, 1);
+
+		// Rotate around Y-axis
+		else if (axis.y == 1)
+			m = new Matrix4(cos, 0, - sin, 0,
+					0, 1, 0, 0,
+					sin, 0, cos, 0,
+					0, 0, 0, 1);
+
+		// Rotate around Z-axis
+		else if (axis.z == 1)
+			m = new Matrix4(cos, - sin, 0, 0,
+					sin, cos, 0, 0,
+					0, 0, 1, 0,
+					0, 0, 0, 1);
+		else {
+			m = new Matrix4();
+			System.err.println("Undetermined axis around which apply rotation!");
+		}
+
+		tr.push(m);
 	}
 
 	/*
@@ -628,6 +680,7 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void endRotate() throws Exception {
+		tr.pop();
 	}
 
 	/*
@@ -639,6 +692,10 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void startTranslate(Vector3D vector) throws Exception {
+		tr.push(new Matrix4(1, 0, 0, vector.x,
+					0, 1, 0, vector.y,
+					0, 0, 1, vector.z,
+					0, 0, 0, 1));
 	}
 
 	/*
@@ -648,6 +705,7 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void endTranslate() throws Exception {
+		tr.pop();
 	}
 
 	/*
@@ -659,6 +717,10 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void startScale(Vector3D scale) throws Exception {
+		tr.push(new Matrix4(scale.x, 0, 0, 0,
+					0, scale.y, 0, 0,
+					0, 0, scale.z, 0,
+					0, 0, 0, 1));
 	}
 
 	/*
@@ -668,6 +730,7 @@ public class SceneBuilder implements ParserHandler {
 	 */
 	@Override
 	public void endScale() throws Exception {
+		tr.pop();
 	}
 
 }

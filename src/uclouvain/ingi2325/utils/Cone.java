@@ -1,6 +1,6 @@
 package uclouvain.ingi2325.utils;
 
-import uclouvain.ingi2325.exception.*;
+import uclouvain.ingi2325.math.Matrix4;
 
 /**
  * Represents a sphere
@@ -12,20 +12,22 @@ public class Cone extends Surface {
 	private float radius;
 	private float height;
 	private boolean capped;
+	private Point3D center;
 
 	public Cone(float radius, float height, boolean capped, String name) {
 		this.radius = radius;
 		this.height = height;
 		this.capped = capped;
 		this.name = name;
+		center = new Point3D(0, 0, 0);
 		hit = new Point3D(0, 0, 0);
 	}
 
 	public float traverse(Ray ray, float t0, float t1) {
 		//FIXME: top of the cone must be a point!
-		//FIXME: height shoudln't alterate radius!
+		//FIXME: height shouldn't alterate radius!
 		Point3D position = ray.getOrigin();
-		Vector3D e = new Vector3D(position.x, position.y, position.z);
+		Vector3D e = new Vector3D(position.x + center.x, position.y + center.y, position.z + center.z);
 		Vector3D d = ray.getDirection();
 
 		// Reducing number of operations
@@ -126,6 +128,13 @@ public class Cone extends Surface {
 		shaded.z = Math.min(1, shaded.z);
 
 		return shaded;
+	}
+
+	public void transform(Matrix4 m) {
+		float x = m.getElement(0, 0) * center.x + m.getElement(0, 1) * center.y + m.getElement(0, 2) * center.z + m.getElement(0, 3) * 1.0F;
+		float y = m.getElement(1, 0) * center.x + m.getElement(1, 1) * center.y + m.getElement(1, 2) * center.z + m.getElement(1, 3) * 1.0F;
+		float z = m.getElement(2, 0) * center.x + m.getElement(2, 1) * center.y + m.getElement(2, 2) * center.z + m.getElement(2, 3) * 1.0F;
+		center = new Point3D(x, y, z);
 	}
 
 }

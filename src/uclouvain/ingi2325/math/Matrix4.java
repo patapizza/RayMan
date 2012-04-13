@@ -7,6 +7,7 @@ import uclouvain.ingi2325.utils.Vector4;
  * 
  * @author Antoine Cailliau <antoine.cailliau@uclouvain.be>
  * @author Julien Dupuis
+ * @author Julien Odent <julien.odent@student.uclouvain.be>
  */
 public class Matrix4 {
 
@@ -636,5 +637,18 @@ public class Matrix4 {
 		m31 = 0.0F;
 		m32 = 0.0F;
 		m33 = 1.0F;
+	}
+
+	public Matrix4 multiplyWith(Matrix4 m) {
+		float v;
+		Matrix4 res = new Matrix4();
+		for (int i = 0 ; i < 4 ; i++)
+			for (int j = 0 ; j < 4 ; j++) {
+				v = 0;
+				for (int k = 0 ; k < 4 ; k++)
+					v += getElement(i, k) * m.getElement(k, j);
+				res.setElement(i, j, v);
+			}
+		return res;
 	}
 }
