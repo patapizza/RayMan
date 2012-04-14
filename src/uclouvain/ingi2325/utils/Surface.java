@@ -23,6 +23,10 @@ public abstract class Surface {
 		return name;
 	}
 
+	public Color getAmbient() {
+		return material.getAmbient();
+	}
+
 	public void setMaterial(Material material) {
 		this.material = material;
 	}

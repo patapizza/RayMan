@@ -76,35 +76,19 @@ public class Triangle extends Surface {
 	}
 
 	public Color shade(PointLight p) {
-
-		// Ambient shading
-		Color ambient = material.getAmbient();
-
 		Point3D center = getCenter();
 		Point3D position = p.getPosition();
 		Vector3D l = new Vector3D(position.x - center.x, position.y - center.y, position.z - center.z);
 
 		// Shadows
 		if (traverse(new Ray(hit, l), 0.042F, Float.POSITIVE_INFINITY) != Float.POSITIVE_INFINITY)
-			return ambient;
+			return new Color(0, 0, 0);
 
-		Vector3D n = getNormal().normalize();
-		Color shaded = material.shade(l, n, p.getIntensity());
-
-		// Ambient shading
-		shaded.x += ambient.x;
-		shaded.y += ambient.y;
-		shaded.z += ambient.z;
-
-		// Preventing overflows
-		shaded.x = Math.min(1, shaded.x);
-		shaded.y = Math.min(1, shaded.y);
-		shaded.z = Math.min(1, shaded.z);
-
-		return shaded;
+		return material.shade(l, getNormal().normalize(), p.getIntensity());
 	}
 
 	public void transform(Matrix4 m) {
+		//FIXME: it only takes into account x translations!
 		Point3D[] tr_coordinates = new Point3D[3];
 		Vector3D[] tr_normals = new Vector3D[3];
 		Matrix3 n = (new Matrix3(m)).normalize();

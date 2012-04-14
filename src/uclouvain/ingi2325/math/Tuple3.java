@@ -10,6 +10,7 @@ import uclouvain.ingi2325.exception.*;
  * @author Antoine Cailliau <antoine.cailliau@uclouvain.be>
  * @author Julien Dupuis
  * @author Sébastien Doeraene <sjrdoeraene@gmail.com>
+ * @author Julien Odent <julien.odent@student.uclouvain.be>
  */
 public abstract class Tuple3 {
 
@@ -152,6 +153,12 @@ public abstract class Tuple3 {
 		t.x = x;
 		t.y = y;
 		t.z = z;
+	}
+
+	public void addWith(Tuple3 t) {
+		x += t.x;
+		y += t.y;
+		z += t.z;
 	}
 
 }

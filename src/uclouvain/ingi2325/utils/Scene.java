@@ -97,38 +97,22 @@ public class Scene {
 		}
 		if (t1 == Float.POSITIVE_INFINITY)
 			return background;
-		return surface.shade(point_lights.get(0));
-	}
-
-	/*private Color shade(Triangle t, PointLight p) {
-		Point3D center = t.getCenter();
-		Point3D position = p.getPosition();
-		Vector3D l = new Vector3D(position.x - center.x, position.y - center.y, position.z - center.z);
-		Vector3D n = t.getNormal().normalize();
-		Color c = t.getColor();
 		
-		// Lambertian shading
-		float lambertian = p.getIntensity() * Math.max(0, n.dotProductWith(l.normalize()));
-		Color r = new Color(c.x * lambertian, c.y * lambertian, c.z * lambertian);
-
-		// Blin-Phong shading
-		Vector3D h = getDefaultCamera().getDirection().addWith(l).normalize();
-		float blinphong = 0.5F * p.getIntensity() * (float) Math.pow((double) Math.max(0, n.dotProductWith(h)), 100.0);
-		r.x += blinphong;
-		r.y += blinphong;
-		r.z += blinphong;
+		// Shading
+		Color res = new Color(0, 0, 0);
+		for (PointLight p : point_lights)
+			res.addWith(surface.shade(p));
 
 		// Ambient shading
-		r.x += c.x * 0.25;
-		r.y += c.y * 0.25;
-		r.z += c.z * 0.25;
+		Color ambient = surface.getAmbient();
+		res.addWith(ambient);
 
-		// Prevent overflows
-		r.x = Math.min(1, r.x);
-		r.y = Math.min(1, r.y);
-		r.z = Math.min(1, r.z);
+		// Preventing overflows
+		res.x = Math.min(1, res.x);
+		res.y = Math.min(1, res.y);
+		res.z = Math.min(1, res.z);
 
-		return r;
-	}*/
+		return res;
+	}
 
 }

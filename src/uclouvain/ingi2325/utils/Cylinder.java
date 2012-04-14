@@ -111,31 +111,15 @@ public class Cylinder extends Surface {
 	}
 
 	public Color shade(PointLight p) {
-
-		// Ambient shading
-		Color ambient = material.getAmbient();
-
 		Point3D position = p.getPosition();
 		Vector3D l = (new Vector3D(position.x - hit.x, position.y - hit.y, position.z - hit.z)).normalize();
 
 		// Shadows
 		if (traverse(new Ray(hit, l), 0.042F, Float.POSITIVE_INFINITY) != Float.POSITIVE_INFINITY)
-			return ambient;
+			return new Color(0, 0, 0);
 
 		Vector3D n = (new Vector3D(2 * (hit.x - 0), 2 * (hit.y - 0), 2 * (hit.z - 0))).normalize();
-		Color shaded = material.shade(l, n, p.getIntensity());
-
-		// Ambient shading
-		shaded.x += ambient.x;
-		shaded.y += ambient.y;
-		shaded.z += ambient.z;
-		
-		// Preventing overflows
-		shaded.x = Math.min(1, shaded.x);
-		shaded.y = Math.min(1, shaded.y);
-		shaded.z = Math.min(1, shaded.z);
-
-		return shaded;
+		return material.shade(l, n, p.getIntensity());
 	}
 
 	public void transform(Matrix4 m) {

@@ -9,6 +9,7 @@ public abstract class Material {
 
 	protected Color color;
 	protected String name;
+	protected Color ambient;
 
 	public abstract Color shade(Vector3D l, Vector3D n, float intensity);
 
@@ -21,7 +22,7 @@ public abstract class Material {
 	}
 
 	protected Color getAmbient() {
-		return new Color(color.x * 0.25F, color.y * 0.25F, color.z * 0.25F);
+		return ambient;
 	}
 
 }
