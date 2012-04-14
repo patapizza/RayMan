@@ -51,8 +51,8 @@ public class Sphere extends Surface {
 		return t;
 	}
 
-	public Color shade(PointLight p) {
-		Point3D position = p.getPosition();
+	public Color shade(Light light) {
+		Point3D position = ((PointLight) light).getPosition();
 		Vector3D l = (new Vector3D(position.x - hit.x, position.y - hit.y, position.z - hit.z)).normalize();
 
 		// Shadows
@@ -60,7 +60,7 @@ public class Sphere extends Surface {
 			return new Color(0, 0, 0);
 
 		Vector3D n = (new Vector3D(2 * (hit.x - center.x), 2 * (hit.y - center.y), 2 * (hit.z - center.z))).normalize();
-		return material.shade(l, n, p.getIntensity());
+		return material.shade(l, n, light.getIntensity());
 	}
 
 	public void transform(Matrix4 m) {

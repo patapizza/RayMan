@@ -5,12 +5,9 @@ package uclouvain.ingi2325.utils;
  *
  * @author Julien Odent <julien.odent@student.uclouvain.be>
  */
-public class PointLight {
+public class PointLight extends Light {
 
 	private Point3D position;
-	private float intensity;
-	private Color color;
-	private String name;
 
 	public PointLight(Point3D position, float intensity, Color color, String name) {
 		this.position = position;
@@ -21,18 +18,6 @@ public class PointLight {
 
 	public Point3D getPosition() {
 		return position;
-	}
-
-	public float getIntensity() {
-		return intensity;
-	}
-
-	public Color getColor() {
-		return color;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 }

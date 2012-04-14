@@ -15,7 +15,7 @@ public abstract class Surface {
 
 	public abstract float traverse(Ray r, float t0, float t1);
 
-	public abstract Color shade(PointLight p);
+	public abstract Color shade(Light light);
 
 	public abstract void transform(Matrix4 m);
 

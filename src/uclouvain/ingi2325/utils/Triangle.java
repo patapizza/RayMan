@@ -75,16 +75,16 @@ public class Triangle extends Surface {
 		return t;
 	}
 
-	public Color shade(PointLight p) {
+	public Color shade(Light light) {
 		Point3D center = getCenter();
-		Point3D position = p.getPosition();
+		Point3D position = ((PointLight) light).getPosition();
 		Vector3D l = new Vector3D(position.x - center.x, position.y - center.y, position.z - center.z);
 
 		// Shadows
 		if (traverse(new Ray(hit, l), 0.042F, Float.POSITIVE_INFINITY) != Float.POSITIVE_INFINITY)
 			return new Color(0, 0, 0);
 
-		return material.shade(l, getNormal().normalize(), p.getIntensity());
+		return material.shade(l, getNormal().normalize(), light.getIntensity());
 	}
 
 	public void transform(Matrix4 m) {

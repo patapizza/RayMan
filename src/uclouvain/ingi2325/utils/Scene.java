@@ -18,14 +18,14 @@ public class Scene {
 	private LinkedList<Surface> surfaces;
 	private Color background;
 	private Hashtable<String, Material> materials;
-	private LinkedList<PointLight> point_lights;
+	private LinkedList<Light> lights;
 
 	public Scene() {
 		cameras = new LinkedList<Camera>();
 		camera_default = -1;
 		surfaces = new LinkedList<Surface>();
 		materials = new Hashtable<String, Material>();
-		point_lights = new LinkedList<PointLight>();
+		lights = new LinkedList<Light>();
 	}
 
 	public void addCamera(Camera c) {
@@ -40,8 +40,8 @@ public class Scene {
 		materials.put(m.getName(), m);
 	}
 
-	public void addPointLight(PointLight p) {
-		point_lights.add(p);
+	public void addLight(Light l) {
+		lights.add(l);
 	}
 
 	public void setShape(String geometry, String material, Matrix4 m) {
@@ -69,6 +69,7 @@ public class Scene {
 		// Setting dir vector for phong materials
 		Vector3D direction = c.getDirection();
 		direction.set(- direction.x, - direction.y, - direction.z);
+
 		Enumeration e = materials.keys();
 		Material m;
 		while (e.hasMoreElements()) {
@@ -100,8 +101,8 @@ public class Scene {
 		
 		// Shading
 		Color res = new Color(0, 0, 0);
-		for (PointLight p : point_lights)
-			res.addWith(surface.shade(p));
+		for (Light l : lights)
+			res.addWith(surface.shade(l));
 
 		// Ambient shading
 		Color ambient = surface.getAmbient();

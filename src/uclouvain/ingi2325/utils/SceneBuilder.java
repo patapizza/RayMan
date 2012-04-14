@@ -196,7 +196,7 @@ public class SceneBuilder implements ParserHandler {
 	@Override
 	public void startPointLight(Point3D position, float intensity, Color color,
 			String name) throws Exception {
-		scene.addPointLight(new PointLight(position, intensity, color, name));
+		scene.addLight(new PointLight(position, intensity, color, name));
 	}
 
 	/*
