@@ -40,6 +40,10 @@ public class Scene {
 		materials.put(m.getName(), m);
 	}
 
+	public void addLinearCombinedMaterial(String m1, float w1, String m2, float w2, String name) {
+		materials.put(name, new LinearCombinedMaterial(materials.get(m1), w1, materials.get(m2), w2, name));
+	}
+
 	public void addLight(Light l) {
 		lights.add(l);
 	}

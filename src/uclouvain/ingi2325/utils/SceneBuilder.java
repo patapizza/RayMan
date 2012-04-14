@@ -561,6 +561,7 @@ public class SceneBuilder implements ParserHandler {
 	public void startLinearCombinedMaterial(String material1Name,
 			float weight1, String material2Name, float weight2, String name)
 			throws Exception {
+		scene.addLinearCombinedMaterial(material1Name, weight1, material2Name, weight2, name);
 	}
 
 	/*
