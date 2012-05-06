@@ -651,4 +651,56 @@ public class Matrix4 {
 			}
 		return res;
 	}
+
+	public Vector4 multiplyWith(Vector4 v) {
+		float x, y, z, w;
+		x = m00 * v.x + m01 * v.y + m02 * v.z + m03 * v.w;
+		y = m10 * v.x + m11 * v.y + m12 * v.z + m13 * v.w;
+		z = m20 * v.x + m21 * v.y + m22 * v.z + m23 * v.w;
+		w = m30 * v.x + m31 * v.y + m32 * v.z + m33 * v.w;
+		return new Vector4(x, y, z, w);
+	}
+
+	public Matrix4 invert() {
+	// TODO: use geometry instead of algebraic version
+	// see pp. 134-135
+		Matrix4 m = new Matrix4();
+		float s0 = m00 * m11 - m10 * m01;
+		float s1 = m00 * m12 - m10 * m02;
+		float s2 = m00 * m13 - m10 * m03;
+		float s3 = m01 * m12 - m11 * m02;
+		float s4 = m01 * m13 - m11 * m03;
+		float s5 = m02 * m13 - m12 * m03;
+
+		float c5 = m22 * m33 - m32 * m23;
+		float c4 = m21 * m33 - m31 * m23;
+		float c3 = m21 * m32 - m31 * m22;
+		float c2 = m20 * m33 - m30 * m23;
+		float c1 = m20 * m32 - m30 * m22;
+		float c0 = m20 * m31 - m30 * m21;
+
+		float det = 1.0F / (s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0);
+
+		m.m00 = (m11 * c5 - m12 * c4 + m13 * c3) * det;
+		m.m01 = (- m01 * c5 + m02 * c4 - m03 * c3) * det;
+		m.m02 = (m31 * s5 - m32 * s4 + m33 * s3) * det;
+		m.m03 = (- m21 * s5 + m22 * s4 - m23 * s3) * det;
+
+		m.m10 = (- m10 * c5 + m12 * c2 - m13 * c1) * det;
+		m.m11 = (m00 * c5 - m02 * c2 + m03 * c1) * det;
+		m.m12 = (- m30 * s5 + m32 * s2 - m33 * s1) * det;
+		m.m13 = (m20 * s5 - m22 * s2 + m23 * s1) * det;
+
+		m.m20 = (m10 * c4 - m11 * c2 + m13 * c0) * det;
+		m.m21 = (- m00 * c4 + m01 * c2 - m03 * c0) * det;
+		m.m22 = (m30 * s4 - m31 * s2 + m33 * s0) * det;
+		m.m23 = (- m20 * s4 + m21 * s2 - m23 * s0) * det;
+
+		m.m30 = (- m10 * c3 + m11 * c1 - m12 * c0) * det;
+		m.m31 = (m00 * c3 - m01 * c1 + m02 * c0) * det;
+		m.m32 = (- m30 * s3 + m31 * s1 - m32 * s0) * det;
+		m.m33 = (m20 * s3 - m21 * s1 + m22 * s0) * det;
+
+		return m;
+	}
 }

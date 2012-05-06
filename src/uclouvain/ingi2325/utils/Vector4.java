@@ -12,6 +12,14 @@ import uclouvain.ingi2325.math.*;
  */
 public class Vector4 extends Tuple4 {
 
+	public Vector4(float x, float y, float z, float w) {
+		super(x, y, z, w);
+	}
+
+	public Vector4() {
+		super();
+	}
+
 	/**
 	 * Parse a Vector4 from a string
 	 * @param string   String representation

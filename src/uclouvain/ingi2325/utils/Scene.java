@@ -90,11 +90,28 @@ public class Scene {
 	}
 
 	public Color traverse(Ray r) {
-		/* TODO: use efficient data structure to optimize the traversal (bounding boxes, uniform spatial subdivision, BSP tree...) */
+		// computing new ray if instance
+		Ray r_prime = new Ray(r.getOrigin(), r.getDirection());
+		Matrix4 m;
+
+		float intersection;
 		float t1 = Float.POSITIVE_INFINITY;
 		Surface surface = null;
 		for (Surface s : surfaces) {
-			float intersection = s.traverse(r, 0.0F, t1);
+			m = s.getM();
+
+			// Instance ; applying transformations
+			if (m != null) {
+				Point3D position = r.getOrigin();
+				Vector3D direction = r.getDirection();
+				Vector4 new_position = m.multiplyWith(new Vector4(position.x, position.y, position.z, 1.0F));
+				Vector4 new_direction = m.multiplyWith(new Vector4(direction.x, direction.y, direction.z, 0.0F));
+				r_prime.setOrigin(new Point3D(new_position.x, new_position.y, new_position.z));
+				r_prime.setDirection(new Vector3D(new_direction.x, new_direction.y, new_direction.z));
+				intersection = s.traverse(r_prime, 0.0F, t1);
+			}
+			else
+				intersection = s.traverse(r, 0.0F, t1);
 			if (intersection < t1) {
 				t1 = intersection;
 				surface = s;
