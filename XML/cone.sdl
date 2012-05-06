@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE Sdl SYSTEM "sdl.dtd">
+
+<Sdl>
+   <Cameras>
+      <Camera position="-6 6 3" direction="1 -1 -0.5" up="0 1 0" fovy="60" name="cam0" /> 
+   </Cameras>   
+   
+   <Lights>
+      <PointLight position="10 10 10" intensity="1" color="1 1 1" name="light0" />
+   </Lights>
+   
+   <Geometry>
+      <Cone radius="1.0" height="3.0" capped="true" name="cone1" />
+   </Geometry>
+   
+   <Materials>
+      <DiffuseMaterial color="1 0 0" name="red" />
+   </Materials>
+   
+   <Scene camera="cam0" lights="light0" background="0.5 0.5 0.5">
+      <Shape geometry="cone1" material="red" />
+   </Scene>
+</Sdl>

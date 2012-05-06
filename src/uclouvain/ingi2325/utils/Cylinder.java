@@ -112,7 +112,7 @@ public class Cylinder extends Surface {
 
 	public Color shade(Light light) {
 		Point3D position = ((PointLight) light).getPosition();
-		Vector3D l = (new Vector3D(position.x - hit.x, position.y - hit.y, position.z - hit.z)).normalize();
+		Vector3D l = new Vector3D(position.x - hit.x, position.y - hit.y, position.z - hit.z);
 
 		// Shadows
 		if (traverse(new Ray(hit, l), 0.042F, Float.POSITIVE_INFINITY) != Float.POSITIVE_INFINITY)
