@@ -89,6 +89,7 @@ public class Triangle extends Surface {
 
 	public void transform(Matrix4 m) {
 		//FIXME: it only takes into account x translations!
+		super.transform(m);
 		Point3D[] tr_coordinates = new Point3D[3];
 		Vector3D[] tr_normals = new Vector3D[3];
 		Matrix3 n = (new Matrix3(m)).normalize();
