@@ -1,5 +1,6 @@
 package uclouvain.ingi2325.utils;
 
+import uclouvain.ingi2325.math.Matrix3;
 import uclouvain.ingi2325.math.Matrix4;
 
 /**
@@ -59,7 +60,17 @@ public class Sphere extends Surface {
 		if (traverse(new Ray(hit, l), 0.042F, Float.POSITIVE_INFINITY) != Float.POSITIVE_INFINITY)
 			return new Color(0, 0, 0);
 
+		// Computing transformed normal vector
 		Vector3D n = (new Vector3D(2 * (hit.x - center.x), 2 * (hit.y - center.y), 2 * (hit.z - center.z))).normalize();
+		Matrix4 m4 = getM();
+		if (m4 != null) {
+			Matrix3 m = (new Matrix3(m4)).normalize();
+			float x = m.getElement(0, 0) * n.x + m.getElement(0, 1) * n.y + m.getElement(0, 2) * n.z;
+			float y = m.getElement(1, 0) * n.x + m.getElement(1, 1) * n.y + m.getElement(1, 2) * n.z;
+			float z = m.getElement(2, 0) * n.x + m.getElement(2, 1) * n.y + m.getElement(2, 2) * n.z;
+			n = (new Vector3D(x, y, z)).normalize();
+		}
+
 		return material.shade(l, n, light.getIntensity());
 	}
 

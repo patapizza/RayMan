@@ -98,6 +98,7 @@ public class Triangle extends Surface {
 			y = m.getElement(1, 0) * coordinates[i].x + m.getElement(1, 1) * coordinates[i].y + m.getElement(1, 2) * coordinates[i].z + m.getElement(0, 3) * 1.0F;
 			z = m.getElement(2, 0) * coordinates[i].x + m.getElement(2, 1) * coordinates[i].y + m.getElement(2, 2) * coordinates[i].z + m.getElement(0, 3) * 1.0F;
 			tr_coordinates[i] = new Point3D(x, y, z);
+			// FIXME: not correct ! see p. 129
 			x = n.getElement(0, 0) * normals[i].x + n.getElement(0, 1) * normals[i].y + n.getElement(0, 2) * normals[i].z;
 			y = n.getElement(1, 0) * normals[i].x + n.getElement(1, 1) * normals[i].y + n.getElement(1, 2) * normals[i].z;
 			z = n.getElement(2, 0) * normals[i].x + n.getElement(2, 1) * normals[i].y + n.getElement(2, 2) * normals[i].z;
