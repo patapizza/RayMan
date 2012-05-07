@@ -585,6 +585,7 @@ public class SceneBuilder implements ParserHandler {
 		scene.setDefaultCamera(cameraName);
 		scene.setBackground(background);
 		tr = new Stack();
+		scene.buildBSPTree();
 	}
 
 	/*

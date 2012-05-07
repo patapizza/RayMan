@@ -19,6 +19,8 @@ public class Scene {
 	private Color background;
 	private Hashtable<String, Material> materials;
 	private LinkedList<Light> lights;
+	private BSPNode bsp;
+	private float min, max;
 
 	public Scene() {
 		cameras = new LinkedList<Camera>();
@@ -94,7 +96,7 @@ public class Scene {
 		Ray r_prime = new Ray(r.getOrigin(), r.getDirection());
 		Matrix4 m;
 
-		float intersection;
+		/*float intersection;
 		float t1 = Float.POSITIVE_INFINITY;
 		Surface surface = null;
 		for (Surface s : surfaces) {
@@ -118,6 +120,9 @@ public class Scene {
 			}
 		}
 		if (t1 == Float.POSITIVE_INFINITY)
+			return background;*/
+		Surface surface = bsp.hit(r, min, max);
+		if (surface == null)
 			return background;
 		
 		// Shading
@@ -135,6 +140,61 @@ public class Scene {
 		res.z = Math.min(1, res.z);
 
 		return res;
+	}
+
+	public void buildBSPTree() {
+		/*min = Float.NEGATIVE_INFINITY;
+		max = Float.POSITIVE_INFINITY;*/
+		min = -100.0F;
+		max = 100.0F;
+		LinkedList<Triangle> triangles = new LinkedList<Triangle>();
+		BoundingBox bb;
+		float current_min, current_max;
+		for (Surface s : surfaces) {
+			if (s instanceof Triangle) {
+				Triangle t = (Triangle) s;
+				triangles.add(t);
+				bb = t.getBoundingBox();
+				current_min = bb.getMin().x;
+				if (current_min < min)
+					min = current_min;
+				current_max = bb.getMax().x;
+				if (current_max > max)
+					max = current_max;
+			}
+		}
+		
+		float d = (min + max) / 2;
+		LinkedList<Triangle> left_side = new LinkedList<Triangle>();
+		LinkedList<Triangle> right_side = new LinkedList<Triangle>();
+		for (Triangle t : triangles) {
+			bb = t.getBoundingBox();
+			if (bb.getMin().x <= d)
+				left_side.add(t);
+			if (bb.getMax().x >= d)
+				right_side.add(t);
+		}
+		bsp = new BSPNode(buildBSPTree(left_side, min, d), buildBSPTree(right_side, d, max), null, d);
+	}
+
+	private Surface buildBSPTree(LinkedList<Triangle> triangles, float d_min, float d_max) {
+		int size = triangles.size();
+		if (size == 0)
+			return new BSPNode(null, null, null, (d_min + d_max) / 2);
+		if (size == 1)
+			return new BSPNode(null, null, (Triangle) triangles.getFirst(), (d_min + d_max) / 2);
+		LinkedList<Triangle> left_side = new LinkedList<Triangle>();
+		LinkedList<Triangle> right_side = new LinkedList<Triangle>();
+		float d = (d_min + d_max) / 2;
+		BoundingBox bb;
+		for (Triangle t : triangles) {
+			bb = t.getBoundingBox();
+			if (bb.getMin().x <= d)
+				left_side.add(t);
+			if (bb.getMax().x >= d)
+				right_side.add(t);
+		}
+		return new BSPNode(buildBSPTree(left_side, d_min, d), buildBSPTree(right_side, d, d_max), null, d);
 	}
 
 }

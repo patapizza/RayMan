@@ -13,6 +13,7 @@ public class Triangle extends Surface {
 	private Point3D[] coordinates;
 	private Vector3D[] normals;
 	private TextureCoordinates[] textureCoordinates;
+	private BoundingBox bb;
 
 	public Triangle(Point3D[] coordinates, Vector3D[] normals, TextureCoordinates[] textureCoordinates, String name) {
 		this.coordinates = coordinates;
@@ -20,6 +21,11 @@ public class Triangle extends Surface {
 		this.textureCoordinates = textureCoordinates;
 		this.name = name;
 		hit = new Point3D(0, 0, 0);
+		bb = new BoundingBox(coordinates);
+	}
+
+	public BoundingBox getBoundingBox() {
+		return bb;
 	}
 
 	public Point3D[] getCoordinates() {
