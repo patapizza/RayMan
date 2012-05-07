@@ -21,6 +21,7 @@ public abstract class Surface {
 	public abstract Color shade(Light light);
 
 	public void transform(Matrix4 m) {
+
 		// Saving invert transform matrix for ray tracing
 		this.m = m.invert();
 	}

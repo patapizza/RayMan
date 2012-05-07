@@ -21,7 +21,6 @@ public class PhongMaterial extends DiffuseMaterial {
 
 	public Color shade(Vector3D l, Vector3D n, float intensity) {
 		Color color = super.shade(l, n, intensity);
-		//Vector3D h = direction.addWith(l).normalize();
 		Vector3D h = ((direction.normalize()).addWith(l.normalize())).normalize();
 		float phong = 0.5F * intensity * (float) Math.pow((double) Math.max(0, n.dotProductWith(h)), shininess);
 		color.x += phong;

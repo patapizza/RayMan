@@ -39,7 +39,7 @@ public class Scene {
 	}
 
 	public void addSurface(Surface s) {
-		// Uncomment to use a BSP tree for triangles (doesn't work with transforms)
+		// comment out to use a BSP tree for triangles (doesn't work with transforms)
 		/*if (s instanceof Triangle)
 			triangles.add((Triangle) s);
 		else*/
@@ -172,7 +172,8 @@ public class Scene {
 			d[i][0] = 100.0F;
 			d[i][1] = -100.0F;
 		}
-
+		
+		// computing scene boundaries
 		BoundingBox bb;
 		Tuple3 min, max;
 		for (Triangle t : triangles) {
@@ -196,6 +197,7 @@ public class Scene {
 		this.max = d[0][1];
 		float mid = this.min - 0.00042F;
 
+		// initializing root of BSP tree
 		LinkedList<Triangle> left_side = new LinkedList<Triangle>();
 		LinkedList<Triangle> right_side = new LinkedList<Triangle>();
 		for (Triangle t : triangles) {
@@ -209,6 +211,8 @@ public class Scene {
 	}
 
 	private Surface buildBSPTree(LinkedList<Triangle> triangles, float d_min, float d_max, int axis, float[][] d, int maxdepth) {
+		
+		// base step
 		if (--maxdepth == 0 || triangles.size() < 30)
 			return new Triangles(triangles);
 		
@@ -219,12 +223,16 @@ public class Scene {
 		}
 		d_new[axis][0] = d_min;
 		d_new[axis][1] = d_max;
-		LinkedList<Triangle> left_side = new LinkedList<Triangle>();
-		LinkedList<Triangle> right_side = new LinkedList<Triangle>();
+
+		// choosing next separating plane
 		int axis_new = (axis + 1) % 3;
 		int rand = (new Random()).nextInt(1);
 		float mid = (rand == 0) ? d_new[axis_new][rand] - 0.00042F : d_new[axis_new][rand] + 0.00042F;
+
+		// classifying remaining triangles from their position
 		BoundingBox bb;
+		LinkedList<Triangle> left_side = new LinkedList<Triangle>();
+		LinkedList<Triangle> right_side = new LinkedList<Triangle>();
 		for (Triangle t : triangles) {
 			bb = t.getBoundingBox();
 			if (bb.getMin().get(axis) <= mid)
@@ -232,6 +240,8 @@ public class Scene {
 			if (bb.getMax().get(axis) >= mid)
 				right_side.add(t);
 		}
+
+		// recursion
 		return new BSPNode(buildBSPTree(left_side, d_new[axis_new][0], mid, axis_new, d_new, maxdepth), buildBSPTree(right_side, mid, d_new[axis_new][1], axis_new, d_new, maxdepth), null, mid, axis_new);
 	}
 

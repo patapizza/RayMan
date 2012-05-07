@@ -1,0 +1,39 @@
+Computer Graphics Project (part 2)
+Author: Julien Odent
+
+
+Project architecture
+--
+The entry point of the program is the class Demo. It creates a JFrame containing the BufferedImage to render and calls the utils/SceneBuilder to build up a scene from the SDL input file.
+The drawPixels() method obviously draw each pixel after its ray has been made and tested against intersecting triangles.
+The main component is the class utils/Scene: it has the references to the lights, the surfaces, the cameras, the materials... The utils/SceneBuilder object makes objects from the parser and pass their references into utils/Scene.
+The method traverse() finds the closest surface (if any) to the view point and calls the shade() method before sending back the resulting pixel Color.
+
+The abstract class Surface handles the shapes. It provides the abstract methods traverse() (also hit() used by BSPTree) and shade().
+There are three primitives implementing Surface: Triangle, Sphere and Cylinder (alas Cone doesn't work well).
+The shade() method computes the vectors l, n and also handles shadows before calling a Material's own shading method.
+
+The abstract class Light handles the lights. Only point lights (PointLight) are available.
+
+The abstract class Material handles the materials. There are three classes extending it: DiffuseMaterial, PhongMaterial (which strictly speaking extends DiffuseMaterial) and LinearCombinedMaterial. The shade() method takes the vectors l, n and the light's intensity, which are computed by the Surface's shade() method.
+PhongMaterial extends DiffuseMaterial in order to easily apply the Blinn-Phong shading directly on the precomputed Lambertian shading.
+
+Transformations
+The transform matrices are directly merged using a simple stack in the SceneBuilder class. The resulting matrix is then sent to its respective Surface (via Scene's setShape() method).
+Right before rendering a Surface (Scene's traverse() method), the ray is altered when appropriate (using instanciation). The transformed normal vector is computed inside a Surface's shade() method.
+
+BSP Tree
+Supporting classes: BoundingBox, HitRecord, Triangles, BSPNode.
+A BSP tree handles the traversing between rays and surfaces (untransformed Triangle only).
+The BSP tree is built recursively thanks to the Scene's method buildBSPTree(). At each step, it chooses the axis in a cycle and picks the separating plane at random (between the minimum or the maximum among the remaining triangles' vertices). The building halts when we get at the allowed max depth (10) or when there are less than a given amount of remaining triangles (30). That's the aim of the Triangles class: providing a base step for the recursion to ensure proper ray traversing among last triangles. Both Triangles and BSPNode classes extend Surface, so that OOP serves our purpose, which is to recursively propagate the ray traversing. Speaking of which, the ray traversing is performed into the Scene's traverse() method, right under the classic version. I needed a proper hit() method instead of the home-brewed traverse() within surfaces' classes (which basically calls traverse() before filling the HitRecord with distance and surface).
+However, transformations don't work with it by design: the BSP tree is built recursively and the ray-triangles intersection is tested on its root (which then recursively tests if the ray intersect). We don't know which triangle is about to be hit before actually traversing it with the wrong ray.
+
+
+Running and compiling
+--
+Simply issue the following commands in the current directory (i.e. the same where this very file is located):
+$ cd src
+$ javac Demo.java (compiling)
+$ java Demo <path/to/sdl/file.sdl> <width> <height> &
+
+Any OBJ file referenced into the input SDL file should be present into the same directory than the SDL file.
