@@ -39,9 +39,10 @@ public class Scene {
 	}
 
 	public void addSurface(Surface s) {
-		if (s instanceof Triangle)
+		// Uncomment to use a BSP tree for triangles (doesn't work with transforms)
+		/*if (s instanceof Triangle)
 			triangles.add((Triangle) s);
-		else
+		else*/
 			surfaces.add(s);
 	}
 
@@ -101,7 +102,7 @@ public class Scene {
 	}
 
 	public Color traverse(Ray r) {
-		// computing new ray if instance
+		// ray to compute if instance
 		Ray r_prime = new Ray(r.getOrigin(), r.getDirection());
 		Matrix4 m;
 
@@ -193,8 +194,6 @@ public class Scene {
 		}
 		this.min = d[0][0];
 		this.max = d[0][1];
-		
-		//float mid = (this.min + this.max) / 2;
 		float mid = this.min - 0.00042F;
 
 		LinkedList<Triangle> left_side = new LinkedList<Triangle>();
@@ -212,9 +211,6 @@ public class Scene {
 	private Surface buildBSPTree(LinkedList<Triangle> triangles, float d_min, float d_max, int axis, float[][] d, int maxdepth) {
 		if (--maxdepth == 0 || triangles.size() < 30)
 			return new Triangles(triangles);
-		/*int size = triangles.size();
-		if (size < 100)
-			return new Triangles(triangles);*/
 		
 		float[][] d_new = new float[3][2];
 		for (int i = 0 ; i < 3 ; i++) {
@@ -223,14 +219,11 @@ public class Scene {
 		}
 		d_new[axis][0] = d_min;
 		d_new[axis][1] = d_max;
-		//System.out.println("Axis: "+axis+" ["+d_min+","+d_max+"]");
 		LinkedList<Triangle> left_side = new LinkedList<Triangle>();
 		LinkedList<Triangle> right_side = new LinkedList<Triangle>();
 		int axis_new = (axis + 1) % 3;
-		//float mid = (d_new[axis_new][0] + d_new[axis_new][1]) / 2;
 		int rand = (new Random()).nextInt(1);
 		float mid = (rand == 0) ? d_new[axis_new][rand] - 0.00042F : d_new[axis_new][rand] + 0.00042F;
-		//float mid = d_new[axis_new][(new Random()).nextInt(1)] + 0.00042F;
 		BoundingBox bb;
 		for (Triangle t : triangles) {
 			bb = t.getBoundingBox();
@@ -239,7 +232,6 @@ public class Scene {
 			if (bb.getMax().get(axis) >= mid)
 				right_side.add(t);
 		}
-		//System.out.println("Axis_new: "+axis_new+" Left: ["+d_new[axis_new][0]+","+mid+"] -> "+left_side.size()+" Right: ["+mid+","+d_new[axis_new][1]+"] -> "+right_side.size()+")");
 		return new BSPNode(buildBSPTree(left_side, d_new[axis_new][0], mid, axis_new, d_new, maxdepth), buildBSPTree(right_side, mid, d_new[axis_new][1], axis_new, d_new, maxdepth), null, mid, axis_new);
 	}
 

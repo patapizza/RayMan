@@ -30,61 +30,27 @@ public class BSPNode extends Surface {
 		float xp = xa + t0 * xb;
 		float t;
 		if (xp < d) {
-			if (xb < 0) {
+			if (xb < 0)
 				return left != null && left.hit(r, t0, t1, rec);
-				/*if (left == null)
-					return null;
-				return ((BSPNode) left).hit(r, t0, t1);*/
-			}
 			t = (d - xa) / xb;
 			r.setDirection(new Vector3D(t * direction.x, t * direction.y, t * direction.z));
-			if (t > t1) {
+			if (t > t1)
 				return left != null && left.hit(r, t0, t1, rec);
-				/*if (left == null)
-					return null;
-				return ((BSPNode) left).hit(r, t0, t1);*/
-			}
 			if (left != null && left.hit(r, t0, t, rec))
 				return true;
-			/*if (left != null) {
-				Surface s = ((BSPNode) left).hit(r, t0, t);
-				if (s != null)
-					return s;
-			}*/
 			return right != null && right.hit(r, t, t1, rec);
-			/*if (right == null)
-				return null;
-			return ((BSPNode) right).hit(r, t, t1);*/
 		}
-		else if (xp > d) {
-			if (xb > 0) {
+		else {
+			if (xb > 0)
 				return right != null && right.hit(r, t0, t1, rec);
-				/*if (right == null)
-					return null;
-				return ((BSPNode) right).hit(r, t0, t1);*/
-			}
 			t = (d - xa) / xb;
 			r.setDirection(new Vector3D(t * direction.x, t * direction.y, t * direction.z));
-			if (t < t0) {
+			if (t < t0)
 				return right != null && right.hit(r, t0, t1, rec);
-				/*if (right == null)
-					return null;
-				return ((BSPNode) right).hit(r, t0, t1);*/
-			}
 			if (right != null && right.hit(r, t0, t, rec))
 				return true;
-			/*if (right != null) {
-				Triangle triangle = ((BSPNode) right).hit(r, t, t1);
-				if (triangle != null)
-					return triangle;
-			}*/
 			return left != null && left.hit(r, t0, t, rec);
-			/*if (left == null)
-				return null;
-			return ((BSPNode) left).hit(r, t0, t);*/
 		}
-		else
-			return false;
 	}
 
 	public Color shade(Light light) {
