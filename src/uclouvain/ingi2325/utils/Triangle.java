@@ -81,6 +81,15 @@ public class Triangle extends Surface {
 		return t;
 	}
 
+	public boolean hit(Ray ray, float t0, float t1, HitRecord rec) {
+		float t = traverse(ray, t0, t1);
+		if (t == Float.POSITIVE_INFINITY)
+			return false;
+		rec.setT(t);
+		rec.setS(this);
+		return true;
+	}
+
 	public Color shade(Light light) {
 		Point3D center = getCenter();
 		Point3D position = ((PointLight) light).getPosition();

@@ -161,4 +161,12 @@ public abstract class Tuple3 {
 		z += t.z;
 	}
 
+	public float get(int axis) {
+		if (axis == 0)
+			return x;
+		if (axis == 1)
+			return y;
+		return z;
+	}
+
 }
